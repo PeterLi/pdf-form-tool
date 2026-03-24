@@ -1163,16 +1163,33 @@ async function saveTemplate() {
       const newName = mapping.suggestedName;
       
       try {
-        // pdf-lib doesn't have a direct rename, so we use the internal method
-        // This works by updating the field's /T entry in the PDF dictionary
-        const fieldDict = field.acroField.dict;
+        // pdf-lib doesn't have a direct rename, so we access the internal API
+        // Try multiple access paths for different pdf-lib versions
+        let fieldDict = null;
+        
+        if (field.acroField && field.acroField.dict) {
+          fieldDict = field.acroField.dict;
+        } else if (field.ref) {
+          // Alternative: lookup via document catalog
+          const ref = field.ref;
+          const obj = pdfDoc.context.lookup(ref);
+          if (obj && obj.dict) fieldDict = obj.dict;
+          else if (obj) fieldDict = obj;
+        }
+        
+        if (!fieldDict) {
+          console.warn(`[template] Cannot access field dict for "${oldName}"`);
+          continue;
+        }
+        
+        // Update the /T (name) entry
         fieldDict.set(PDFName.of('T'), PDFString.of(newName));
         
         renamed++;
         renamedList.push({ oldName, newName });
         console.log(`[template] Renamed "${oldName}" → "${newName}"`);
       } catch (e) {
-        console.warn(`[template] Failed to rename "${oldName}":`, e.message);
+        console.error(`[template] Failed to rename "${oldName}":`, e.message, e);
       }
     }
     
