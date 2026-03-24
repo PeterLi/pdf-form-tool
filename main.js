@@ -1060,23 +1060,32 @@ async function downloadFilledPdf() {
       for (const field of fields) {
         const name = field.getName();
         const val  = state.fieldValues[name] ?? '';
-        if (val) filled++;
+        if (val) {
+          filled++;
+          console.log(`[download] Processing field "${name}" with value "${val}"`);
+        }
         
         try {
           const typeName = field.constructor.name;
+          console.log(`[download] Field "${name}" type: ${typeName}, value: "${val}"`);
+          
           if (typeName === 'PDFTextField') {
             field.setText(val);
-            if (val) console.log(`[download] Filled "${name}" = "${val}"`);
+            console.log(`[download] ✅ Set text for "${name}" = "${val}"`);
           } else if (typeName === 'PDFCheckBox') {
             val === 'on' ? field.check() : field.uncheck();
           } else if (typeName === 'PDFDropdown') {
             if (val) field.select(val);
           }
         } catch (e) {
-          console.warn(`Field "${name}":`, e.message);
+          console.error(`[download] ❌ Error filling "${name}":`, e.message);
         }
       }
       console.log('[download] Filled', filled, 'of', fields.length, 'fields');
+      
+      // Flatten the form so filled values are burned into the PDF
+      form.flatten();
+      console.log('[download] Form flattened');
     }
 
     const outBytes = await freshDoc.save();
