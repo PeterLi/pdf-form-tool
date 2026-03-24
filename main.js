@@ -1004,6 +1004,9 @@ async function downloadFilledPdf() {
         : el.value;
     }
   });
+  
+  console.log('[download] Field values captured:', Object.keys(state.fieldValues).length, 'fields');
+  console.log('[download] Values:', state.fieldValues);
 
   try {
     const freshDoc = await PDFDocument.load(state.pdfBytes, { ignoreEncryption: true });
@@ -1050,13 +1053,20 @@ async function downloadFilledPdf() {
     } else {
       // AcroForm mode: fill PDF form fields
       const form = freshDoc.getForm();
-      for (const field of form.getFields()) {
+      const fields = form.getFields();
+      console.log('[download] AcroForm mode: filling', fields.length, 'fields');
+      
+      let filled = 0;
+      for (const field of fields) {
         const name = field.getName();
         const val  = state.fieldValues[name] ?? '';
+        if (val) filled++;
+        
         try {
           const typeName = field.constructor.name;
           if (typeName === 'PDFTextField') {
             field.setText(val);
+            if (val) console.log(`[download] Filled "${name}" = "${val}"`);
           } else if (typeName === 'PDFCheckBox') {
             val === 'on' ? field.check() : field.uncheck();
           } else if (typeName === 'PDFDropdown') {
@@ -1066,6 +1076,7 @@ async function downloadFilledPdf() {
           console.warn(`Field "${name}":`, e.message);
         }
       }
+      console.log('[download] Filled', filled, 'of', fields.length, 'fields');
     }
 
     const outBytes = await freshDoc.save();
