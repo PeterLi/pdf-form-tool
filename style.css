@@ -135,6 +135,21 @@ html, body {
   cursor: not-allowed;
 }
 
+.btn-accent {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  color: white;
+  font-weight: 500;
+}
+
+.btn-accent:hover {
+  background: linear-gradient(135deg, #059669 0%, #047857 100%);
+}
+
+.btn-accent:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
 .btn-sm {
   background: transparent;
   color: var(--gray-600);

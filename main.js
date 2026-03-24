@@ -1,5 +1,5 @@
 import * as pdfjsLib from 'pdfjs-dist';
-import { PDFDocument, rgb, StandardFonts } from 'pdf-lib';
+import { PDFDocument, rgb, StandardFonts, PDFName, PDFString } from 'pdf-lib';
 
 // ── PDF.js worker setup ──────────────────────────────────────────────────────
 pdfjsLib.GlobalWorkerOptions.workerSrc = new URL(
@@ -36,6 +36,7 @@ const downloadBtn       = document.getElementById('download-btn');
 const clearBtn          = document.getElementById('clear-btn');
 const highlightToggle   = document.getElementById('highlight-toggle');
 const exportMappingBtn  = document.getElementById('export-mapping-btn');
+const saveTemplateBtn   = document.getElementById('save-template-btn');
 const modeToggleBtn     = document.getElementById('mode-toggle-btn');
 const modeLabelEl       = document.getElementById('mode-label');
 const detectFieldsBtn   = document.getElementById('detect-fields-btn');
@@ -630,7 +631,16 @@ async function switchDetectionMode(mode) {
     if (state.visualFieldsPerPage.length === 0) {
       await runVisualDetection();
     }
+    // Can't rename visual fields (they're not real AcroForm fields)
+    saveTemplateBtn.disabled = true;
+  } else {
+    // Enable if we have renameable fields
+    const hasRenameableFields = Object.values(state.fieldMappings).some(
+      m => m.suggestedName && m.suggestedName !== m.originalName
+    );
+    saveTemplateBtn.disabled = !hasRenameableFields;
   }
+  
   await renderAllPages();
   setStatus(`Switched to ${mode === 'visual' ? 'Visual detection' : 'AcroForm'} mode`);
 }
@@ -750,6 +760,12 @@ async function loadPdf(bytes, name = 'document.pdf') {
   await renderAllPages();
 
   downloadBtn.disabled = false;
+  
+  // Enable Save Template if we have fields with suggested names
+  const hasRenameableFields = state.detectionMode === 'acroform' && 
+    Object.values(state.fieldMappings).some(m => m.suggestedName && m.suggestedName !== m.originalName);
+  saveTemplateBtn.disabled = !hasRenameableFields;
+  
   setStatus(`Loaded "${name}"`);
 }
 
@@ -1118,6 +1134,86 @@ async function downloadFilledPdf() {
   }
 }
 
+// ── Save Template (rename fields with SAM-compatible names) ──────────────────
+async function saveTemplate() {
+  if (!state.pdfBytes || state.detectionMode !== 'acroform') return;
+  
+  setStatus('Creating template with renamed fields…', true);
+  saveTemplateBtn.disabled = true;
+  
+  try {
+    const pdfDoc = await PDFDocument.load(state.pdfBytes, { ignoreEncryption: true });
+    const form = pdfDoc.getForm();
+    const fields = form.getFields();
+    
+    let renamed = 0;
+    const renamedList = [];
+    
+    console.log(`[template] Starting field rename for ${fields.length} fields`);
+    
+    // Rename fields with suggested names
+    for (const field of fields) {
+      const oldName = field.getName();
+      const mapping = state.fieldMappings[oldName];
+      
+      if (!mapping || !mapping.suggestedName || mapping.suggestedName === oldName) {
+        continue; // Skip if no mapping or same name
+      }
+      
+      const newName = mapping.suggestedName;
+      
+      try {
+        // pdf-lib doesn't have a direct rename, so we use the internal method
+        // This works by updating the field's /T entry in the PDF dictionary
+        const fieldDict = field.acroField.dict;
+        fieldDict.set(PDFName.of('T'), PDFString.of(newName));
+        
+        renamed++;
+        renamedList.push({ oldName, newName });
+        console.log(`[template] Renamed "${oldName}" → "${newName}"`);
+      } catch (e) {
+        console.warn(`[template] Failed to rename "${oldName}":`, e.message);
+      }
+    }
+    
+    if (renamed === 0) {
+      setStatus('No fields to rename', false);
+      saveTemplateBtn.disabled = false;
+      alert('No fields have suggested names to rename.');
+      return;
+    }
+    
+    console.log(`[template] Successfully renamed ${renamed} fields`);
+    
+    // Save the modified PDF
+    const outBytes = await pdfDoc.save();
+    const blob = new Blob([outBytes], { type: 'application/pdf' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    const originalName = state.pdfName.replace(/\.pdf$/i, '');
+    a.download = `${originalName}_template.pdf`;
+    a.click();
+    URL.revokeObjectURL(url);
+    
+    setStatus(`Template saved! Renamed ${renamed} field${renamed !== 1 ? 's' : ''}`, false);
+    
+    // Show summary
+    setTimeout(() => {
+      const summary = renamedList.slice(0, 10).map(r => `  "${r.oldName}" → "${r.newName}"`).join('\n');
+      const extra = renamedList.length > 10 ? `\n  ...and ${renamedList.length - 10} more` : '';
+      alert(`✅ Template created with ${renamed} renamed fields:\n\n${summary}${extra}\n\nField names are now SAM-compatible!`);
+    }, 500);
+    
+  } catch (e) {
+    console.error('[template] Error creating template:', e);
+    setStatus('Template creation failed', false);
+    alert(`Error creating template: ${e.message}`);
+  } finally {
+    saveTemplateBtn.disabled = false;
+  }
+}
+
 // ── Event listeners ──────────────────────────────────────────────────────────
 fileInput.addEventListener('change', async e => {
   const file = e.target.files[0];
@@ -1140,6 +1236,7 @@ highlightToggle.addEventListener('click', () => {
 });
 
 exportMappingBtn.addEventListener('click', exportMapping);
+saveTemplateBtn.addEventListener('click', saveTemplate);
 
 modeToggleBtn.addEventListener('click', () => {
   const next = state.detectionMode === 'acroform' ? 'visual' : 'acroform';
