@@ -108,9 +108,13 @@ Pattern: `FIELDNAME_CheckboxValue`
 ```
 
 #### Signature Fields
-Pattern: `FIELDNAME_image`
+Pattern: `FIELDNAME_Image`
 
-Fields containing signature-related keywords automatically get `_image` suffix:
+Fields containing signature-related keywords automatically get `_Image` suffix (capital I).
+
+**Note:** These are still **text input fields** that contain **base64 encoded image data** (not image upload boxes).
+
+**Keywords detected (case-insensitive):**
 - signature
 - sign
 - signed
@@ -118,24 +122,24 @@ Fields containing signature-related keywords automatically get `_image` suffix:
 
 **Example:**
 ```
-✅ Signature_image
-✅ ApplicantSignature_image
-✅ PatientSignature_image
-✅ GuardianSignature_image
-✅ DoctorSignature_image
+✅ Signature_Image
+✅ ApplicantSignature_Image
+✅ PatientSignature_Image
+✅ GuardianSignature_Image
+✅ DoctorSignature_Image
 ```
 
 **Multiple signatures:**
 ```
-✅ Signature_image
-✅ Signature2_image
-✅ Signature3_image
+✅ Signature_Image
+✅ Signature2_Image
+✅ Signature3_Image
 ```
 
 **The PDF Form Tool automatically:**
 - Detects signature keywords in labels
-- Appends `_image` suffix
-- Handles uniqueness (inserts number before `_image`)
+- Appends `_Image` suffix (capital I, PascalCase)
+- Handles uniqueness (inserts number before `_Image`)
 
 ---
 
@@ -147,12 +151,12 @@ These fields have special meaning in SAM SmartForms:
 |------------|---------|----------|
 | `SmartFormUniqueID` | Generates unique ID across all SmartForms | Optional |
 | `FIELDNAME_emailable` | Email from this field receives PDF copy | Optional |
-| `FIELDNAME_image` | Field treated as image (e.g., signatures) | Optional |
+| `FIELDNAME_Image` | Text field containing base64 encoded image (e.g., signatures) | Optional |
 
 **Example Usage:**
 ```
-Email_emailable         → Email field that receives PDF
-Signature_image         → Signature field (image upload)
+Email_emailable         → Email field that receives PDF copy
+Signature_Image         → Text field containing base64 encoded signature image
 SmartFormUniqueID       → Auto-generated unique identifier
 ```
 
@@ -222,9 +226,9 @@ MedicareNumber
 ConsentToTreat_Agree
 EmergencyContactName
 EmergencyContactPhone
-Signature_image
-ApplicantSignature_image
-GuardianSignature_image
+Signature_Image
+ApplicantSignature_Image
+GuardianSignature_Image
 Email_emailable
 SmartFormUniqueID
 Received_Yes

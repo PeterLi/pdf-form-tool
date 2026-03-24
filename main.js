@@ -133,7 +133,7 @@ function toLabelSuggestedName(label) {
     .replace(/[:\*]+/g, ' ')   // other colons to space
     .trim();
 
-  // Check for signature-related keywords (SAM _image suffix)
+  // Check for signature-related keywords (SAM _Image suffix)
   const lowerLabel = clean.toLowerCase();
   const isSignature = /\b(signature|sign|signed|initial)\b/.test(lowerLabel);
 
@@ -141,7 +141,7 @@ function toLabelSuggestedName(label) {
   if (/\bDD\b/.test(clean))   { suffix = 'Day';   clean = clean.replace(/\bDD\b/, '').trim(); }
   else if (/\bMM\b/.test(clean))   { suffix = 'Month'; clean = clean.replace(/\bMM\b/, '').trim(); }
   else if (/\bYYYY\b/.test(clean)) { suffix = 'Year';  clean = clean.replace(/\bYYYY\b/, '').trim(); }
-  else if (isSignature) { suffix = '_image'; }
+  else if (isSignature) { suffix = '_Image'; }
 
   const words = clean.split(/[\s\-\/]+/).filter(w => /[a-zA-Z0-9]/.test(w));
   if (words.length === 0) return '';
@@ -287,8 +287,8 @@ function ensureUniqueSuggestedNames() {
       const fieldName = fieldNames[i];
       const counter = i + 1; // Start from 2 (first is unnumbered)
       
-      // For fields with special suffixes (Day/Month/Year/_image), insert number before suffix
-      const suffixMatch = suggestedName.match(/^(.+)(Day|Month|Year|_image)$/);
+      // For fields with special suffixes (Day/Month/Year/_Image), insert number before suffix
+      const suffixMatch = suggestedName.match(/^(.+)(Day|Month|Year|_Image)$/);
       if (suffixMatch) {
         const [, base, suffix] = suffixMatch;
         state.fieldMappings[fieldName].suggestedName = `${base}${counter}${suffix}`;

@@ -33,8 +33,8 @@ Open-source web-based PDF form viewer and editor with intelligent field detectio
   - PascalCase format (`FirstName`, `DateOfBirth`) per SAM spec
   - No spaces or special characters
   - Automatic date field clustering (DD/MM/YYYY → `Day`, `Month`, `Year`)
-  - **Signature detection:** Auto-append `_image` suffix (`Signature_image`)
-  - **Automatic uniqueness:** Duplicates get numbered (`Date2Day`, `Signature2_image`)
+  - **Signature detection:** Auto-append `_Image` suffix (`Signature_Image`)
+  - **Automatic uniqueness:** Duplicates get numbered (`Date2Day`, `Signature2_Image`)
   - See `SAM_SMARTFORM_SPEC.md` for complete naming rules
 
 - **Debug Mode:**

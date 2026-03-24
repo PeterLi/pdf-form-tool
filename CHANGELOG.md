@@ -227,30 +227,31 @@ Multiple radio groups:
 
 ### Phase 6.2: Automatic Signature Field Detection (March 24, 8:10 PM)
 
-**Peter's Request:** "Fields named 'signature' should get `_image` suffix and be treated as image fields"
+**Peter's Request:** "Fields named 'signature' should get `_Image` suffix"
 
-**SAM SmartForm Spec:** `FIELDNAME_image` is a reserved pattern that tells SAM to treat the field as an image upload field (for signatures, photos, scanned documents).
+**SAM SmartForm Spec:** `FIELDNAME_Image` is a reserved pattern. These are **text input fields** that contain **base64 encoded image data** (not image upload boxes).
 
 **Implementation:**
 - ✅ Detect signature keywords in field labels: `signature`, `sign`, `signed`, `initial`
-- ✅ Automatically append `_image` suffix to suggested name
-- ✅ Updated uniqueness function to handle `_image` suffix (inserts number before suffix)
+- ✅ Automatically append `_Image` suffix (capital I, PascalCase) to suggested name
+- ✅ Updated uniqueness function to handle `_Image` suffix (inserts number before suffix)
+- ✅ Fields remain text inputs (contain base64 encoded image data)
 
 **Examples:**
 ```
 Label Detection:
-  "Signature:" → Signature_image
-  "Applicant Signature:" → ApplicantSignature_image
-  "Patient Signature:" → PatientSignature_image
-  "Guardian Signature:" → GuardianSignature_image
-  "Doctor Signature:" → DoctorSignature_image
-  "Sign Here:" → SignHere_image
-  "Initial:" → Initial_image
+  "Signature:" → Signature_Image
+  "Applicant Signature:" → ApplicantSignature_Image
+  "Patient Signature:" → PatientSignature_Image
+  "Guardian Signature:" → GuardianSignature_Image
+  "Doctor Signature:" → DoctorSignature_Image
+  "Sign Here:" → SignHere_Image
+  "Initial:" → Initial_Image
 
 Multiple Signatures (with uniqueness):
-  "Signature:" → Signature_image
-  "Signature:" → Signature2_image
-  "Signature:" → Signature3_image
+  "Signature:" → Signature_Image
+  "Signature:" → Signature2_Image
+  "Signature:" → Signature3_Image
 ```
 
 **Keyword Detection:**
@@ -261,14 +262,15 @@ Triggers on any of these words in the label (case-insensitive):
 - `initial`
 
 **Smart Numbering:**
-If multiple signature fields exist, numbers are inserted **before** `_image`:
+If multiple signature fields exist, numbers are inserted **before** `_Image`:
 ```
-✅ Signature_image, Signature2_image, Signature3_image
-❌ Signature_image2 (wrong!)
+✅ Signature_Image, Signature2_Image, Signature3_Image
+❌ Signature_Image2 (wrong!)
 ```
 
 **Benefits:**
-- SAM backend knows to accept image uploads
+- SAM backend recognizes `_Image` suffix for base64 encoded signatures
+- Text fields remain as text fields (contain base64 image data)
 - No manual field type configuration needed
 - Works with common signature field patterns
 - Handles multiple signatures automatically
