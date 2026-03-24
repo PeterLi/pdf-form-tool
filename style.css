@@ -330,6 +330,61 @@ input[type="radio"].field-input {
   box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.35) !important;
 }
 
+/* ── Visual detection mode field styling ─────────────── */
+
+/* Base: subtle violet tint so they're visible without being intrusive */
+.field-input[data-detection-source] {
+  border-bottom: 1.5px dashed rgba(124, 58, 237, 0.35);
+}
+
+.field-input[data-detection-source="rect-checkbox"],
+.field-input[data-detection-source="rect-text"],
+.field-input[data-detection-source="rect-textarea"] {
+  border-bottom: none;
+  outline: 1px dashed rgba(124, 58, 237, 0.35);
+  outline-offset: -1px;
+}
+
+/* Highlighted visual fields: violet accent */
+.field-input.highlighted[data-detection-source] {
+  background: rgba(124, 58, 237, 0.06) !important;
+  box-shadow: inset 0 0 0 1.5px rgba(124, 58, 237, 0.45) !important;
+}
+
+.field-input.highlighted[data-detection-source]:hover {
+  background: rgba(124, 58, 237, 0.11) !important;
+}
+
+/* Source-specific tints (subtle) */
+.field-input.highlighted[data-detection-source="line"] {
+  background: rgba(16, 185, 129, 0.06) !important;
+  box-shadow: inset 0 0 0 1.5px rgba(16, 185, 129, 0.45) !important;
+}
+
+.field-input.highlighted[data-detection-source="rect-checkbox"],
+.field-input.highlighted[data-detection-source="rect-text"],
+.field-input.highlighted[data-detection-source="rect-textarea"] {
+  background: rgba(59, 130, 246, 0.06) !important;
+  box-shadow: inset 0 0 0 1.5px rgba(59, 130, 246, 0.45) !important;
+}
+
+.field-input.highlighted[data-detection-source="underscore"] {
+  background: rgba(245, 158, 11, 0.06) !important;
+  box-shadow: inset 0 0 0 1.5px rgba(245, 158, 11, 0.45) !important;
+}
+
+.field-input.highlighted[data-detection-source="label-gap"] {
+  background: rgba(239, 68, 68, 0.05) !important;
+  box-shadow: inset 0 0 0 1.5px rgba(239, 68, 68, 0.35) !important;
+}
+
+/* Mode toggle active: violet */
+#mode-toggle-btn.active {
+  background: rgba(124, 58, 237, 0.08);
+  border-color: rgb(124, 58, 237);
+  color: rgb(109, 40, 217);
+}
+
 /* ── Field debug overlay ──────────────────────────────── */
 
 .field-debug-overlay {
