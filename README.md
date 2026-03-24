@@ -123,10 +123,55 @@ When a PDF has **zero AcroForm fields**, the tool auto-switches to **Visual Dete
 | **Fit** | Fit to width (or Cmd+0) |
 | **Fields** | Toggle field highlights (debug mode) |
 | **Clear** | Reset all field values |
-| **Download** | Save filled PDF |
+| **Export Mapping** | Download field mapping JSON |
+| **Save Template** 🆕 | Create PDF with SAM-compatible field names |
 | **Mode Toggle** | Switch between AcroForm/Visual (🔍 icon) |
 | **Re-detect** | Re-run visual detection (Visual mode only) |
-| **Export Mapping** | Download field mapping JSON |
+| **Download** | Save filled PDF |
+
+---
+
+## 🎯 Save Template Feature (NEW!)
+
+**Problem:** PDFs with generic field names (`Text Field 136`) are hard to work with programmatically.
+
+**Solution:** Create reusable PDF templates with SAM-compatible field names!
+
+### How it works:
+
+1. **Load a PDF** with AcroForm fields (generic names okay)
+2. **Intelligent detection** finds labels and suggests better names:
+   - `Text Field 136` → `firstName`
+   - `Text Field 137` → `dateOfBirth_day`
+   - `Text Field 138` → `dateOfBirth_month`
+3. **Click "Save Template"** to create new PDF with renamed fields
+4. **Use the template** for future submissions - field names are now SAM-compatible!
+
+### Benefits:
+
+- ✅ **Reusable templates** - rename once, use forever
+- ✅ **SAM backend integration** - field names match database fields
+- ✅ **No manual renaming** - no need for Acrobat Pro
+- ✅ **Preserves layout** - all fields stay in same positions
+- ✅ **Original PDF unchanged** - saves as `*_template.pdf`
+
+### Example:
+
+```
+Original PDF:
+  Text Field 195, Text Field 20, Text Field 19...
+
+After Save Template:
+  firstName, lastName, dateOfBirth_day, dateOfBirth_month...
+```
+
+Now you can fill the template programmatically:
+```javascript
+form.getTextField('firstName').setText('Peter');
+form.getTextField('dateOfBirth_day').setText('15');
+```
+
+**Note:** Only works on AcroForm PDFs (not Visual mode). Button is disabled if no fields have suggested names.
 
 ---
 

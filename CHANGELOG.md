@@ -86,6 +86,49 @@
 
 ---
 
+### Phase 5: Save Template Feature (March 24, 7:20 PM)
+
+**Peter's Request:** "Can we rename fields and save the PDF with new names?"
+
+**Feature:** **Save Template** button creates reusable PDF templates with SAM-compatible field names.
+
+**Implementation:**
+- ✅ New "Save Template" button (green accent)
+- ✅ Renames fields using pdf-lib internal API (PDFName/PDFString)
+- ✅ Updates field dictionary `/T` entry directly
+- ✅ Saves as `*_template.pdf` (preserves original)
+- ✅ Shows summary of renamed fields
+- ✅ Only enabled for AcroForm PDFs with suggested names
+- ✅ Disabled in Visual mode (no real fields to rename)
+
+**Benefits:**
+- Create reusable templates with meaningful field names
+- No need for manual renaming in Acrobat Pro
+- Perfect for SAM backend integration
+- Field names match database fields automatically
+
+**Example:**
+```
+Before: Text Field 136, Text Field 137, Text Field 138
+After:  firstName,        lastName,        dateOfBirth_day
+```
+
+**Technical Approach:**
+- Uses `PDFName.of('T')` and `PDFString.of(newName)` to update field dictionary
+- Preserves all field properties (position, size, appearance)
+- Works in-place on the PDF form object
+- Safe - original PDF unchanged
+
+**Testing:**
+- ✅ Renames generic fields to SAM-compatible names
+- ✅ Preserves field positions and properties
+- ✅ Creates working PDF templates
+- ✅ Templates can be filled programmatically
+
+**Status:** ✅ **WORKING** - Template creation fully functional
+
+---
+
 ## Known Issues
 
 ### Visual Detection - Failed PDFs
