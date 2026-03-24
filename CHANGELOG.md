@@ -225,6 +225,58 @@ Multiple radio groups:
 
 ---
 
+### Phase 6.2: Automatic Signature Field Detection (March 24, 8:10 PM)
+
+**Peter's Request:** "Fields named 'signature' should get `_image` suffix and be treated as image fields"
+
+**SAM SmartForm Spec:** `FIELDNAME_image` is a reserved pattern that tells SAM to treat the field as an image upload field (for signatures, photos, scanned documents).
+
+**Implementation:**
+- ✅ Detect signature keywords in field labels: `signature`, `sign`, `signed`, `initial`
+- ✅ Automatically append `_image` suffix to suggested name
+- ✅ Updated uniqueness function to handle `_image` suffix (inserts number before suffix)
+
+**Examples:**
+```
+Label Detection:
+  "Signature:" → Signature_image
+  "Applicant Signature:" → ApplicantSignature_image
+  "Patient Signature:" → PatientSignature_image
+  "Guardian Signature:" → GuardianSignature_image
+  "Doctor Signature:" → DoctorSignature_image
+  "Sign Here:" → SignHere_image
+  "Initial:" → Initial_image
+
+Multiple Signatures (with uniqueness):
+  "Signature:" → Signature_image
+  "Signature:" → Signature2_image
+  "Signature:" → Signature3_image
+```
+
+**Keyword Detection:**
+Triggers on any of these words in the label (case-insensitive):
+- `signature`
+- `sign`
+- `signed`
+- `initial`
+
+**Smart Numbering:**
+If multiple signature fields exist, numbers are inserted **before** `_image`:
+```
+✅ Signature_image, Signature2_image, Signature3_image
+❌ Signature_image2 (wrong!)
+```
+
+**Benefits:**
+- SAM backend knows to accept image uploads
+- No manual field type configuration needed
+- Works with common signature field patterns
+- Handles multiple signatures automatically
+
+**Status:** ✅ **WORKING** - Signature fields automatically detected and named correctly
+
+---
+
 ## Known Issues
 
 ### Visual Detection - Failed PDFs

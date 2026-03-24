@@ -107,6 +107,36 @@ Pattern: `FIELDNAME_CheckboxValue`
 ✅ Terms_Accepted
 ```
 
+#### Signature Fields
+Pattern: `FIELDNAME_image`
+
+Fields containing signature-related keywords automatically get `_image` suffix:
+- signature
+- sign
+- signed
+- initial
+
+**Example:**
+```
+✅ Signature_image
+✅ ApplicantSignature_image
+✅ PatientSignature_image
+✅ GuardianSignature_image
+✅ DoctorSignature_image
+```
+
+**Multiple signatures:**
+```
+✅ Signature_image
+✅ Signature2_image
+✅ Signature3_image
+```
+
+**The PDF Form Tool automatically:**
+- Detects signature keywords in labels
+- Appends `_image` suffix
+- Handles uniqueness (inserts number before `_image`)
+
 ---
 
 ### 4. Reserved Field Names
@@ -193,6 +223,8 @@ ConsentToTreat_Agree
 EmergencyContactName
 EmergencyContactPhone
 Signature_image
+ApplicantSignature_image
+GuardianSignature_image
 Email_emailable
 SmartFormUniqueID
 Received_Yes
