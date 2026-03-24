@@ -2,7 +2,7 @@
 
 Open-source web-based PDF form viewer and editor with intelligent field detection.
 
-**Built for SAM backend integration** - extracts form fields with SAM-compatible naming (camelCase, no spaces).
+**Built for SAM backend integration** - extracts form fields with SAM SmartForm-compatible naming (PascalCase, no spaces).
 
 ---
 
@@ -29,10 +29,11 @@ Open-source web-based PDF form viewer and editor with intelligent field detectio
   - Above fallback (labels above fields)
   - Nearest text as last resort
   
-- **SAM-Compatible Naming:**
-  - camelCase format (`firstName`, `dateOfBirth`)
+- **SAM SmartForm-Compatible Naming:**
+  - PascalCase format (`FirstName`, `DateOfBirth`) per SAM spec
   - No spaces or special characters
-  - Automatic date field clustering (DD/MM/YYYY → `_day`, `_month`, `_year`)
+  - Automatic date field clustering (DD/MM/YYYY → `Day`, `Month`, `Year`)
+  - See `SAM_SMARTFORM_SPEC.md` for complete naming rules
 
 - **Debug Mode:**
   - Toggle field highlights
@@ -259,7 +260,7 @@ Built iteratively by Claude Code (March 24, 2026):
 - PDF rendering with PDF.js
 - Form field overlay system
 - Label detection (left/above/nearest)
-- SAM-compatible naming (camelCase)
+- SAM SmartForm-compatible naming (PascalCase)
 - Date field clustering (DD/MM/YYYY)
 
 **Phase 2:** Visual detection

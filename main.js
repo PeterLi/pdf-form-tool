@@ -134,16 +134,17 @@ function toLabelSuggestedName(label) {
     .trim();
 
   let suffix = '';
-  if (/\bDD\b/.test(clean))   { suffix = '_day';   clean = clean.replace(/\bDD\b/, '').trim(); }
-  else if (/\bMM\b/.test(clean))   { suffix = '_month'; clean = clean.replace(/\bMM\b/, '').trim(); }
-  else if (/\bYYYY\b/.test(clean)) { suffix = '_year';  clean = clean.replace(/\bYYYY\b/, '').trim(); }
+  if (/\bDD\b/.test(clean))   { suffix = 'Day';   clean = clean.replace(/\bDD\b/, '').trim(); }
+  else if (/\bMM\b/.test(clean))   { suffix = 'Month'; clean = clean.replace(/\bMM\b/, '').trim(); }
+  else if (/\bYYYY\b/.test(clean)) { suffix = 'Year';  clean = clean.replace(/\bYYYY\b/, '').trim(); }
 
   const words = clean.split(/[\s\-\/]+/).filter(w => /[a-zA-Z0-9]/.test(w));
   if (words.length === 0) return '';
 
-  return words.map((w, i) => {
+  // PascalCase: capitalize first letter of every word (SAM SmartForm spec)
+  return words.map(w => {
     const s = w.toLowerCase().replace(/[^a-z0-9]/g, '');
-    return i === 0 ? s : s[0].toUpperCase() + s.slice(1);
+    return s[0].toUpperCase() + s.slice(1);
   }).join('') + suffix;
 }
 
@@ -186,7 +187,7 @@ function applyDateFieldClustering() {
       if (!mapping.label) return false;
       const label = mapping.label.toLowerCase();
       return (label.includes('date') || label.includes('dob'))
-        && !/_(day|month|year)$/.test(mapping.suggestedName);
+        && !/(Day|Month|Year)$/.test(mapping.suggestedName);
     });
 
     if (dateLabelFields.length < 2) continue;
@@ -240,8 +241,8 @@ function applyDateFieldClustering() {
       }
       if (!proximate) continue;
 
-      // Apply Australian date format suffixes: day / month / year (left-to-right)
-      const suffixes = ['_day', '_month', '_year'];
+      // Apply Australian date format suffixes: Day / Month / Year (PascalCase - SAM spec)
+      const suffixes = ['Day', 'Month', 'Year'];
       console.log(`[date-cluster] Clustering "${baseName}" → ${withPos.map((f, i) => f.fn + suffixes[i]).join(', ')}`);
       for (let i = 0; i < withPos.length; i++) {
         state.fieldMappings[withPos[i].fn].suggestedName = baseName + suffixes[i];

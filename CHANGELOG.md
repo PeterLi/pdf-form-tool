@@ -129,6 +129,44 @@ After:  firstName,        lastName,        dateOfBirth_day
 
 ---
 
+### Phase 6: SAM SmartForm Spec Compliance (March 24, 7:55 PM)
+
+**Peter's Request:** "Integrate SAM SmartForm naming convention - PascalCase instead of camelCase"
+
+**SAM SmartForm Spec:**
+- Field names must be **PascalCase** (`FirstName`, not `firstName`)
+- Only alphabetical characters (a-z, A-Z), numbers, underscores/hyphens allowed
+- Date fields: `DateOfBirthDay`, `DateOfBirthMonth`, `DateOfBirthYear`
+- Radio buttons: `FIELDNAME_RadioValue` (e.g., `Received_Yes`, `Received_No`)
+- Checkboxes: `FIELDNAME_CheckboxValue` (e.g., `Consent_Agree`)
+- Reserved fields: `SmartFormUniqueID`, `FIELDNAME_emailable`, `FIELDNAME_image`
+
+**Changes:**
+- ✅ Updated `toLabelSuggestedName()` to generate PascalCase (not camelCase)
+- ✅ Updated date clustering suffixes: `Day`, `Month`, `Year` (not `_day`, `_month`, `_year`)
+- ✅ Updated regex to detect PascalCase date suffixes
+- ✅ Created `SAM_SMARTFORM_SPEC.md` - complete specification document
+- ✅ Updated README.md to reference PascalCase and spec doc
+
+**Example Transformations:**
+```
+Before (camelCase):
+  firstName, lastName, dateOfBirth_day, dateOfBirth_month, dateOfBirth_year
+
+After (PascalCase - SAM spec):
+  FirstName, LastName, DateOfBirthDay, DateOfBirthMonth, DateOfBirthYear
+```
+
+**Benefits:**
+- Full compliance with SAM SmartForm backend
+- Consistent naming across all SAM forms
+- No manual post-processing needed
+- Radio/checkbox naming pattern documented for future
+
+**Status:** ✅ **COMPLIANT** - All field names now follow SAM SmartForm spec
+
+---
+
 ## Known Issues
 
 ### Visual Detection - Failed PDFs
