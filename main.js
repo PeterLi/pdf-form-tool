@@ -1067,18 +1067,23 @@ async function downloadFilledPdf() {
         
         try {
           const typeName = field.constructor.name;
-          console.log(`[download] Field "${name}" type: ${typeName}, value: "${val}"`);
+          
+          if (val) {
+            console.log(`[download] Attempting to fill "${name}" (type=${typeName}) with value="${val}"`);
+          }
           
           if (typeName === 'PDFTextField') {
             field.setText(val);
-            console.log(`[download] ✅ Set text for "${name}" = "${val}"`);
+            console.log(`[download] ✅ PDFTextField.setText called for "${name}"`);
           } else if (typeName === 'PDFCheckBox') {
             val === 'on' ? field.check() : field.uncheck();
           } else if (typeName === 'PDFDropdown') {
             if (val) field.select(val);
+          } else {
+            console.log(`[download] Unknown field type: ${typeName} for "${name}"`);
           }
         } catch (e) {
-          console.error(`[download] ❌ Error filling "${name}":`, e.message);
+          console.error(`[download] ❌ Error filling "${name}":`, e.message, e);
         }
       }
       console.log('[download] Filled', filled, 'of', fields.length, 'fields');
