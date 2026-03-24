@@ -1,0 +1,19 @@
+{
+  "name": "pdf-form-tool",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "Open source PDF form viewer and editor",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "inspect": "node inspect-form.js"
+  },
+  "dependencies": {
+    "pdf-lib": "^1.17.1",
+    "pdfjs-dist": "^4.0.379"
+  },
+  "devDependencies": {
+    "vite": "^5.0.0"
+  }
+}
