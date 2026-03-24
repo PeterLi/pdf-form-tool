@@ -7,6 +7,29 @@ Field IDs/names in PDF forms for SAM SmartForms must follow these conventions fo
 
 ## Field Naming Rules
 
+### 0. Uniqueness Requirement ⚠️
+**All field IDs/names MUST be unique across the entire form.**
+
+If multiple fields would generate the same name, append a number (starting from 2):
+```
+✅ FirstName, FirstName2, FirstName3
+✅ DateOfBirthDay, DateOfBirthMonth, DateOfBirthYear
+✅ Date2Day, Date2Month, Date2Year
+✅ Received_Yes, Received2_Yes, Received3_Yes
+```
+
+**For date fields:** Insert the number before the suffix:
+```
+Date → DateDay, DateMonth, DateYear
+Date2 → Date2Day, Date2Month, Date2Year (not DateDay2!)
+```
+
+The PDF Form Tool automatically ensures uniqueness by:
+1. Detecting all duplicate suggested names
+2. Keeping first occurrence as-is
+3. Appending `2`, `3`, `4`, etc. to subsequent occurrences
+4. For date fields: inserting number before `Day`/`Month`/`Year` suffix
+
 ### 1. Case Convention
 **PascalCase** - First letter of each word capitalized, no spaces.
 

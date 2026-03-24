@@ -249,6 +249,52 @@ function applyDateFieldClustering() {
       }
     }
   }
+  
+  // Ensure all suggested names are unique (SAM requirement)
+  ensureUniqueSuggestedNames();
+}
+
+// Ensure all suggested field names are unique by appending numbers to duplicates
+function ensureUniqueSuggestedNames() {
+  const nameCount = {};
+  const originalNames = {};
+  
+  // First pass: count occurrences of each suggested name
+  for (const [fieldName, mapping] of Object.entries(state.fieldMappings)) {
+    const suggested = mapping.suggestedName;
+    if (!suggested) continue;
+    
+    if (!nameCount[suggested]) {
+      nameCount[suggested] = [];
+    }
+    nameCount[suggested].push(fieldName);
+    originalNames[fieldName] = suggested;
+  }
+  
+  // Second pass: append numbers to duplicates
+  for (const [suggestedName, fieldNames] of Object.entries(nameCount)) {
+    if (fieldNames.length <= 1) continue; // No duplicates
+    
+    console.log(`[uniqueness] Found ${fieldNames.length} fields with name "${suggestedName}"`);
+    
+    // Keep first occurrence as-is, append numbers to rest
+    for (let i = 1; i < fieldNames.length; i++) {
+      const fieldName = fieldNames[i];
+      const counter = i + 1; // Start from 2 (first is unnumbered)
+      
+      // For date fields (ending in Day/Month/Year), insert number before suffix
+      const dateMatch = suggestedName.match(/^(.+)(Day|Month|Year)$/);
+      if (dateMatch) {
+        const [, base, suffix] = dateMatch;
+        state.fieldMappings[fieldName].suggestedName = `${base}${counter}${suffix}`;
+        console.log(`[uniqueness]   Renamed "${fieldName}": "${suggestedName}" → "${base}${counter}${suffix}"`);
+      } else {
+        // For non-date fields, append number directly
+        state.fieldMappings[fieldName].suggestedName = `${suggestedName}${counter}`;
+        console.log(`[uniqueness]   Renamed "${fieldName}": "${suggestedName}" → "${suggestedName}${counter}"`);
+      }
+    }
+  }
 }
 
 // ── Visual Field Detection ────────────────────────────────────────────────────

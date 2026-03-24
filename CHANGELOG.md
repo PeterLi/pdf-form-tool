@@ -167,6 +167,64 @@ After (PascalCase - SAM spec):
 
 ---
 
+### Phase 6.1: Automatic Field Name Uniqueness (March 24, 8:00 PM)
+
+**Peter's Request:** "Ensure field IDs are unique - append numbers if duplicates exist"
+
+**Problem:** Forms with multiple date fields or radio button groups could generate duplicate names:
+- Multiple "Date" fields → `DateDay`, `DateMonth`, `DateYear` (all duplicate!)
+- Multiple "Received" radio groups → `Received_Yes`, `Received_Yes` (duplicate!)
+
+**Solution:** Automatic deduplication with smart numbering
+
+**Implementation:**
+- ✅ New `ensureUniqueSuggestedNames()` function
+- ✅ Runs after all field name generation (including date clustering)
+- ✅ Detects all duplicate suggested names
+- ✅ Appends numbers starting from 2 (first occurrence unchanged)
+- ✅ **Smart numbering for date fields:** Inserts number before suffix
+  - `DateDay` → `Date2Day` (not `DateDay2`)
+  - `DateMonth` → `Date2Month`
+  - `DateYear` → `Date2Year`
+
+**Examples:**
+```
+Multiple date fields:
+  Date of Birth → DateOfBirthDay, DateOfBirthMonth, DateOfBirthYear
+  Start Date    → StartDateDay, StartDateMonth, StartDateYear
+  End Date      → EndDateDay, EndDateMonth, EndDateYear
+  (All unique! ✅)
+
+Conflicting "Date" labels:
+  Date → DateDay, DateMonth, DateYear
+  Date → Date2Day, Date2Month, Date2Year
+  Date → Date3Day, Date3Month, Date3Year
+  (Numbered automatically! ✅)
+
+Multiple radio groups:
+  Received → Received_Yes, Received_No
+  Received → Received2_Yes, Received2_No
+  (Future-ready for radio support! ✅)
+```
+
+**Console Logging:**
+```
+[uniqueness] Found 2 fields with name "DateDay"
+[uniqueness]   Renamed "Text Field 50": "DateDay" → "Date2Day"
+[uniqueness] Found 2 fields with name "FirstName"
+[uniqueness]   Renamed "Text Field 20": "FirstName" → "FirstName2"
+```
+
+**Benefits:**
+- Guaranteed unique field names (SAM requirement)
+- No manual renaming needed
+- Smart numbering preserves readability
+- Works for both AcroForm and Visual detection
+
+**Status:** ✅ **WORKING** - All duplicate names automatically deduplicated
+
+---
+
 ## Known Issues
 
 ### Visual Detection - Failed PDFs

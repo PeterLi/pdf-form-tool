@@ -33,6 +33,7 @@ Open-source web-based PDF form viewer and editor with intelligent field detectio
   - PascalCase format (`FirstName`, `DateOfBirth`) per SAM spec
   - No spaces or special characters
   - Automatic date field clustering (DD/MM/YYYY → `Day`, `Month`, `Year`)
+  - **Automatic uniqueness:** Duplicates get numbered (`Date2Day`, `FirstName2`)
   - See `SAM_SMARTFORM_SPEC.md` for complete naming rules
 
 - **Debug Mode:**
