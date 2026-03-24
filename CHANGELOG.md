@@ -229,7 +229,7 @@ Multiple radio groups:
 
 **Peter's Request:** "Fields named 'signature' should get `_Image` suffix"
 
-**SAM SmartForm Spec:** `FIELDNAME_Image` is a reserved pattern. These are **text input fields** that contain **base64 encoded image data** (not image upload boxes).
+**SAM SmartForm Spec:** `FIELDNAME_Image` is a reserved pattern. These are **text input fields** that contain **data URL formatted images** (e.g., `data:image/png;base64,iVBORw0K...`) - not image upload boxes.
 
 **Implementation:**
 - ✅ Detect signature keywords in field labels: `signature`, `sign`, `signed`, `initial`
@@ -269,13 +269,50 @@ If multiple signature fields exist, numbers are inserted **before** `_Image`:
 ```
 
 **Benefits:**
-- SAM backend recognizes `_Image` suffix for base64 encoded signatures
-- Text fields remain as text fields (contain base64 image data)
+- SAM backend recognizes `_Image` suffix for data URL images
+- Text fields remain as text fields (contain data URLs: `data:image/png;base64,...`)
 - No manual field type configuration needed
 - Works with common signature field patterns
 - Handles multiple signatures automatically
 
+**Data URL Format:**
+Signature fields contain data URLs, not raw base64:
+```
+data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB8AAAAfCAY...
+```
+
+This includes:
+- MIME type (`image/png`, `image/jpeg`, etc.)
+- Base64 encoding marker
+- Base64 encoded image data
+
 **Status:** ✅ **WORKING** - Signature fields automatically detected and named correctly
+
+---
+
+### Phase 6.2.1: Correction - Capitalization & Data URL Clarification (March 24, 8:30 PM)
+
+**Peter's corrections:**
+1. Suffix should be `_Image` (capital I) not `_image` - PascalCase consistency
+2. Fields contain **data URLs** not raw base64 strings
+
+**Updated documentation:**
+- Changed all references from `_image` to `_Image`
+- Clarified data URL format: `data:image/png;base64,iVBORw0K...`
+- Updated SAM_SMARTFORM_SPEC.md, README.md, CHANGELOG.md
+
+**Data URL Components:**
+```
+data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB8AAAAfCAY...
+└─┬─┘ └──┬───┘ └─┬──┘ └──────────────┬─────────────────────┘
+  │      │       │                   │
+  │      │       │                   └─ Base64 encoded image data
+  │      │       └───────────────────── Encoding (base64)
+  │      └───────────────────────────── MIME type (image/png, image/jpeg, etc.)
+  └──────────────────────────────────── Data URL prefix
+```
+
+**Status:** ✅ **CORRECTED** - Using proper capitalization and accurate format description
 
 ---
 

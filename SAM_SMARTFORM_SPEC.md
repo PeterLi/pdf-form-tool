@@ -112,7 +112,9 @@ Pattern: `FIELDNAME_Image`
 
 Fields containing signature-related keywords automatically get `_Image` suffix (capital I).
 
-**Note:** These are still **text input fields** that contain **base64 encoded image data** (not image upload boxes).
+**Note:** These are still **text input fields** that contain **data URL formatted images** (not image upload boxes).
+
+**Data URL format:** `data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB8AAAAfCAY...`
 
 **Keywords detected (case-insensitive):**
 - signature
@@ -151,12 +153,12 @@ These fields have special meaning in SAM SmartForms:
 |------------|---------|----------|
 | `SmartFormUniqueID` | Generates unique ID across all SmartForms | Optional |
 | `FIELDNAME_emailable` | Email from this field receives PDF copy | Optional |
-| `FIELDNAME_Image` | Text field containing base64 encoded image (e.g., signatures) | Optional |
+| `FIELDNAME_Image` | Text field containing data URL image (e.g., `data:image/png;base64,...`) | Optional |
 
 **Example Usage:**
 ```
 Email_emailable         → Email field that receives PDF copy
-Signature_Image         → Text field containing base64 encoded signature image
+Signature_Image         → Text field containing data URL (data:image/png;base64,...)
 SmartFormUniqueID       → Auto-generated unique identifier
 ```
 
