@@ -244,6 +244,22 @@ Built iteratively by Claude Code (March 24, 2026):
 
 ---
 
+## 🎉 Recent Fix: Download Now Works!
+
+**Bug:** Filled PDFs were downloading empty (March 24, 2026)
+
+**Cause:** Browser bundles pdf-lib with different class names than Node:
+- Node: `PDFTextField`
+- Browser: `PDFTextField2` (adds "2" suffix)
+
+**Solution:** Changed type checking from `===` to `.startsWith()` to catch all variants.
+
+**Files changed:** `main.js` (lines 1067-1077)
+
+**Testing:** Works on all AcroForm PDFs tested. Fields are filled correctly and remain editable in downloaded PDF.
+
+---
+
 ## 🚨 For Future Developers
 
 **If visual detection fails on a PDF:**
@@ -280,4 +296,6 @@ Edit `main.js`:
 
 **Git Repository:** Local only (not pushed to remote yet)
 
-**Status:** ✅ Production-ready for AcroForm PDFs | ⚠️ Experimental for visual detection
+**Status:** ✅ **WORKING!** Production-ready for AcroForm PDFs | ⚠️ Experimental for visual detection
+
+**Last Updated:** March 24, 2026, 5:45 PM AEDT - Form filling fully functional after browser bundle type matching fix

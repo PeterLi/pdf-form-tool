@@ -1092,8 +1092,9 @@ async function downloadFilledPdf() {
       console.log('[download] Filled', filled, 'of', fields.length, 'fields');
       
       // Flatten the form so filled values are burned into the PDF
-      form.flatten();
-      console.log('[download] Form flattened');
+      // form.flatten();
+      // console.log('[download] Form flattened');
+      console.log('[download] Skipping flatten (testing)');
     }
 
     const outBytes = await freshDoc.save();
