@@ -1208,7 +1208,7 @@ async function saveTemplate() {
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    const originalName = state.pdfName.replace(/\.pdf$/i, '');
+    const originalName = (filenameEl.textContent || 'document').replace(/\.pdf$/i, '');
     a.download = `${originalName}_template.pdf`;
     a.click();
     URL.revokeObjectURL(url);
