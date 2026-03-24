@@ -1072,15 +1072,18 @@ async function downloadFilledPdf() {
             console.log(`[download] Attempting to fill "${name}" (type=${typeName}) with value="${val}"`);
           }
           
-          if (typeName === 'PDFTextField') {
+          // Match PDFTextField or PDFTextField2 (different bundle versions)
+          if (typeName.startsWith('PDFTextField')) {
             field.setText(val);
-            console.log(`[download] ✅ PDFTextField.setText called for "${name}"`);
-          } else if (typeName === 'PDFCheckBox') {
+            console.log(`[download] ✅ Text field filled: "${name}" = "${val}"`);
+          } else if (typeName.startsWith('PDFCheckBox')) {
             val === 'on' ? field.check() : field.uncheck();
-          } else if (typeName === 'PDFDropdown') {
+            if (val === 'on') console.log(`[download] ✅ Checkbox checked: "${name}"`);
+          } else if (typeName.startsWith('PDFDropdown')) {
             if (val) field.select(val);
+            if (val) console.log(`[download] ✅ Dropdown selected: "${name}" = "${val}"`);
           } else {
-            console.log(`[download] Unknown field type: ${typeName} for "${name}"`);
+            console.log(`[download] ⚠️ Unknown field type: ${typeName} for "${name}"`);
           }
         } catch (e) {
           console.error(`[download] ❌ Error filling "${name}":`, e.message, e);
